@@ -83,18 +83,3 @@ table(df.train$Status)
 mod <- glm(Status ~ AverageTilt + RoofType +  HS.or.Below +Avg.Value + Median.Income +
            Insolation + NumStories + AverageShading + RoofSqFoot + OldBill, data=df.train, family="binomial")
 summary(mod)
-structure
-
-mod3 <- glm(Status ~AverageTilt + RoofType +  HS.or.Below +Avg.Value + Median.Income +
-             Insolation + NumStories + AverageShading + RoofSqFoot + OldBill +
-             EnergyConsumption + ProductTypeAlt +     EngineeringSoldAnnualkWh + 
-             UtilityCostPerKWh + HomeSqFoot, data= df.train, family="binomial")
-vif(mod1)
-
-gr = joined %>% 
-  filter(HomeSqFoot<500000)
-ggplot(gr, aes(YearBuilt, HomeSqFoot)) + geom_point() + ylim(0, 5000)
-
-mod2 <- lm(HomeSqFoot~ YearBuilt + NumStories + RoofSqFoot, data = gr)
-summary(mod2)
-summary(mod3)
