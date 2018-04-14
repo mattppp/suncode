@@ -87,7 +87,9 @@ data_combined = data_installed.append(data_cancelled)
 
 #TODO DELETE
 #data_combined = data_combined.head(n=len(data_combined))
-data_sample = data_combined.head(n=10000).append(data_combined.tail(n=10000), ignore_index=True)
+sample_installed = list(np.random.choice(48657, 10000, replace=False))
+sample_cancelled = list(np.random.choice(48657, 10000, replace=False) + 48657)
+data_sample = data_combined.iloc[sample_installed, :].append(data_combined.iloc[sample_cancelled, :], ignore_index=True)
 
 
 data_sunlight = pd.read_csv('data/Google Sunroof_Yearly_Sunlight_by_State.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
@@ -109,18 +111,16 @@ data_sample = add_cols(data_df=data_sample, source_dict=data_insolation, key='Zi
     'Insolation',
 ])
 
-# data_census = pd.read_csv('data/CensusZIP.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
-# data_census = read_as_dict(data_df=data_census, key='Zip')
-# data_sample = add_cols(data_df=data_sample, source_dict=data_census, key='Zip', new_columns=[
-#     'Avg.Age',
-#     'Median.Income',
-# ])
-
+data_census = pd.read_csv('data/CensusZIP.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
+data_census = read_as_dict(data_df=data_census, key='Zip')
+data_sample = add_cols(data_df=data_sample, source_dict=data_census, key='Zip', new_columns=[
+    'Avg.Age',
+    'Median.Income',
+])
 
 print(data_sample.head(n=5))
 
-
 # Printing
-data_sample = data_combined.head(n=10000).append(data_combined.tail(n=10000))
-data_sample.to_csv('data_v2_sample.csv', sep=',')
-data_combined.to_csv('data_v2_full.csv',sep=',')
+# data_sample = data_combined.head(n=10000).append(data_combined.tail(n=10000))
+# data_sample.to_csv('data_v2_sample.csv', sep=',')
+# data_combined.to_csv('data_v2_full.csv', sep=',')
