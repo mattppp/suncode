@@ -55,18 +55,18 @@ factors = [
     'EngineeringSoldkWSize',
     'EngineeringSoldAnnualkWh',
     'EnergyConsumption',
-#    'Region',
+    'Region',
     'State',
     'Zip',
 #    'Latitude',
 #    'Longitude',
-#    'AHJ',
-#    'RoofType',
+    'AHJ',
+    'RoofType',
     'RoofSqFoot',
     'NumMountingPlanes',
     'NumPanels',
-#    'Utility',
-#    'ProductTypeAlt',
+    'Utility',
+    'ProductTypeAlt',
     'PowerwallCount',
     'UtilityCostPerKWh',
     'OldBill',
@@ -74,9 +74,9 @@ factors = [
     'UtilityInflationRate',
     'GasRatePlanID',
     'AverageShading',
-    'Reroof',
-    'MPU',
-#    'NumStories',
+#    'Reroof',
+#    'MPU',
+    'NumStories',
 ]
 
 data_installed = data_installed[factors]
@@ -109,15 +109,18 @@ data_sample = add_cols(data_df=data_sample, source_dict=data_insolation, key='Zi
     'Insolation',
 ])
 
-# data_census = pd.read_csv('data/ZIP_incomepop.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
+# data_census = pd.read_csv('data/CensusZIP.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
 # data_census = read_as_dict(data_df=data_census, key='Zip')
-# data_sample = add_cols(data_df=data_sample, source_dict=data_census, key='Zip')
+# data_sample = add_cols(data_df=data_sample, source_dict=data_census, key='Zip', new_columns=[
+#     'Avg.Age',
+#     'Median.Income',
+# ])
 
 
 print(data_sample.head(n=5))
 
 
 # Printing
-# data_sample = data_combined.head(n=100).append(data_combined.tail(n=100))
-# data_sample.to_csv('data_combined_truncated.csv', sep=',')
-# data_combined.to_csv('data_combined.csv',sep=',')
+data_sample = data_combined.head(n=10000).append(data_combined.tail(n=10000))
+data_sample.to_csv('data_v2_sample.csv', sep=',')
+data_combined.to_csv('data_v2_full.csv',sep=',')
