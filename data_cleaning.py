@@ -51,6 +51,9 @@ def filer_rows(data_df, keys):
     filtered_list = []
 
     for i in range(len(data_df['JobId'])):
+        if i % 2000 == 0:
+            print('filer row: ' + str(i))
+
         JobId = data_df.get_value(i, 'JobId')[0]
         if JobId in keys:
             filtered_list.append([i])
@@ -94,34 +97,33 @@ data_cancelled = data_cancelled[factors]
 data_installed['Status'] = 1
 data_cancelled['Status'] = 0
 data_combined = data_installed.append(data_cancelled)
-
+data_combined.to_csv('data_combined.csv', sep=',')
+"""
+data_sample = data_combined
 #TODO DELETE
-sample_installed = list(np.random.choice(48657, 10000, replace=False))
-sample_cancelled = list(np.random.choice(38728, 10000, replace=False) + 48657)
-data_sample = data_combined.iloc[sample_installed, :].append(data_combined.iloc[sample_cancelled, :], ignore_index=True)
+# sample_installed = list(np.random.choice(48657, 10000, replace=False))
+# sample_cancelled = list(np.random.choice(38728, 10000, replace=False) + 48657)
+# data_sample = data_combined.iloc[sample_installed, :].append(data_combined.iloc[sample_cancelled, :], ignore_index=True)
 
 # data_zillow = pd.read_csv('data/Zillow Data.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
 # data_zillow = read_as_dict(data_df=data_zillow, key='JobId')
 # filtered_list = filer_rows(data_df=data_combined, keys=list(data_zillow.keys()))
 # data_sample = data_combined.iloc[filtered_list, :]
 
-# print(data_sample.head(100))
-# print(len(data_sample['JobId']))
-
-# data_sample = add_cols(data_df=data_sample, source_dict=data_zillow, key='JobId', new_columns=[
-#     'Channel',
-#     'AverageTilt',
-#     'PaymentType',
-#     'GrossPrice',
-#     'FederalTaxCredit',
-#     'Bedroom',
-#     'HomeSqFoot',
-#     'HeatingType',
-#     'Heating',
-#     'CoolingType',
-#     'Cooling',
-#     'YearBuilt',
-# ])
+data_sample = add_cols(data_df=data_sample, source_dict=data_zillow, key='JobId', new_columns=[
+    'Channel',
+    'AverageTilt',
+    'PaymentType',
+    'GrossPrice',
+    'FederalTaxCredit',
+    'Bedroom',
+    'HomeSqFoot',
+    'HeatingType',
+    'Heating',
+    'CoolingType',
+    'Cooling',
+    'YearBuilt',
+])
 
 
 data_sunlight = pd.read_csv('data/Google Sunroof_Yearly_Sunlight_by_State.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
@@ -151,8 +153,9 @@ data_sample = add_cols(data_df=data_sample, source_dict=data_census, key='Zip', 
 ])
 
 
-print(data_sample.head(100))
+# print(data_sample.head(100))
 
 # Printing
-data_sample.to_csv('data_v2_sample.csv', sep=',')
-data_combined.to_csv('data_v2_full.csv', sep=',')
+#data_sample.to_csv('data_v2_sample.csv', sep=',')
+data_sample.to_csv('data_v2_full.csv', sep=',')
+"""
