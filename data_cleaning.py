@@ -16,20 +16,33 @@ def read_as_dict(data_df, key):
     return d
 
 def add_cols(data_df, source_dict, key):
-    columns = data_df.columns.tolist()
+    data_new = data_df
+    columns = data_new.columns.tolist()
+    sample_key = data_new.get_value(0, key)
+    if not isinstance(sample_key, str):
+        sample_key = sample_key[0]
 
-    for i in range(len(data_df['JobId'])):
-        
-        k = data_df[key][i]
-        print(str(k))
-        # for c in source_dict[k].keys():
-        #     if c not in columns:
-        #         data_df[c] = 0
-        #         columns.append([c])
-        #     data_df[c][i] = source_dict[k][c]
+    for c in source_dict[sample_key].keys():
+        if c not in columns:
+            data_new[c] = 0
+            columns.append([c])
 
-data_installed = pd.read_csv('data/PV_installed_customer_details.csv', sep=',', encoding='ISO-8859-1')
-data_cancelled = pd.read_csv('data/PV_cancelled_customer_details.csv', sep=',', encoding='ISO-8859-1')
+    for i in range(len(data_new['JobId'])):
+
+        if i % 5000 == 0:
+            print(i)
+
+        k = data_new.get_value(i, key)
+        if not isinstance(k, str):
+            k = k[0]
+
+        for c in source_dict[k].keys():
+            data_new.set_value(i, c, source_dict[k][c])
+
+    return data_new
+
+data_installed = pd.read_csv('data/PV_installed_customer_details.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
+data_cancelled = pd.read_csv('data/PV_cancelled_customer_details.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
 
 factors = [
     'JobId',
@@ -37,7 +50,7 @@ factors = [
     'EngineeringSoldAnnualkWh',
     'EnergyConsumption',
 #    'Region',
-#    'State',
+    'State',
 #    'Zip',
 #    'Latitude',
 #    'Longitude',
@@ -66,12 +79,19 @@ data_installed['Status'] = 1
 data_cancelled['Status'] = 0
 data_combined = data_installed.append(data_cancelled)
 
-# data_sunlight = pd.read_csv('data/Google Sunroof_Yearly_Sunlight_by_State.csv', sep=',', encoding='ISO-8859-1')
-# data_sunlight = read_as_dict(data_df=data_sunlight, key='State')
+data_sunlight = pd.read_csv('data/Google Sunroof_Yearly_Sunlight_by_State.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
+data_sunlight = read_as_dict(data_df=data_sunlight, key='State')
 
-# add_cols(data_df=data_combined, source_dict=data_sunlight, key='State')
+# #TODO DELETE
+# #data_combined = data_combined.head(n=len(data_combined))
+# data_combined = data_combined.head(n=50000)
+
+# print(len(data_combined))
+
+# data_combined = add_cols(data_df=data_combined, source_dict=data_sunlight, key='State')
 
 # print(data_combined.head(n=5))
+
 
 # for row in range(len(data_combined['JobId'])):
 #     
@@ -80,5 +100,8 @@ data_combined = data_installed.append(data_cancelled)
 
 # print(data_combined.head(n=5))
 
+
+# Printing
 data_out = data_combined.head(n=100).append(data_combined.tail(n=100))
-data_out.to_csv('data_combined.csv',sep=',')
+data_out.to_csv('data_combined_truncated.csv', sep=',')
+data_combined.to_csv('data_combined.csv',sep=',')
