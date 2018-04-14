@@ -40,12 +40,22 @@ def add_cols(data_df, source_dict, key, new_columns):
         try:
             if key == 'Zip':
                 k = int(k)
-            for c in source_dict[k].keys():
+            for c in new_columns:
                 data_new.set_value(i, c, source_dict[k][c])
         except:
             continue
 
     return data_new
+
+def filer_rows(data_df, keys):
+    filtered_list = []
+
+    for i in range(len(data_df['JobId'])):
+        JobId = data_df.get_value(i, 'JobId')[0]
+        if JobId in keys:
+            filtered_list.append([i])
+
+    return filtered_list
 
 data_installed = pd.read_csv('data/PV_installed_customer_details.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
 data_cancelled = pd.read_csv('data/PV_cancelled_customer_details.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
@@ -80,16 +90,38 @@ factors = [
 ]
 
 data_installed = data_installed[factors]
-data_cancelled = data_installed[factors]
+data_cancelled = data_cancelled[factors]
 data_installed['Status'] = 1
 data_cancelled['Status'] = 0
 data_combined = data_installed.append(data_cancelled)
 
 #TODO DELETE
-#data_combined = data_combined.head(n=len(data_combined))
 sample_installed = list(np.random.choice(48657, 10000, replace=False))
-sample_cancelled = list(np.random.choice(48657, 10000, replace=False) + 48657)
+sample_cancelled = list(np.random.choice(38728, 10000, replace=False) + 48657)
 data_sample = data_combined.iloc[sample_installed, :].append(data_combined.iloc[sample_cancelled, :], ignore_index=True)
+
+# data_zillow = pd.read_csv('data/Zillow Data.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
+# data_zillow = read_as_dict(data_df=data_zillow, key='JobId')
+# filtered_list = filer_rows(data_df=data_combined, keys=list(data_zillow.keys()))
+# data_sample = data_combined.iloc[filtered_list, :]
+
+# print(data_sample.head(100))
+# print(len(data_sample['JobId']))
+
+# data_sample = add_cols(data_df=data_sample, source_dict=data_zillow, key='JobId', new_columns=[
+#     'Channel',
+#     'AverageTilt',
+#     'PaymentType',
+#     'GrossPrice',
+#     'FederalTaxCredit',
+#     'Bedroom',
+#     'HomeSqFoot',
+#     'HeatingType',
+#     'Heating',
+#     'CoolingType',
+#     'Cooling',
+#     'YearBuilt',
+# ])
 
 
 data_sunlight = pd.read_csv('data/Google Sunroof_Yearly_Sunlight_by_State.csv', sep=',', encoding='ISO-8859-1', low_memory=False)
@@ -118,9 +150,9 @@ data_sample = add_cols(data_df=data_sample, source_dict=data_census, key='Zip', 
     'Median.Income',
 ])
 
-print(data_sample.head(n=5))
+
+print(data_sample.head(100))
 
 # Printing
-# data_sample = data_combined.head(n=10000).append(data_combined.tail(n=10000))
-# data_sample.to_csv('data_v2_sample.csv', sep=',')
-# data_combined.to_csv('data_v2_full.csv', sep=',')
+data_sample.to_csv('data_v2_sample.csv', sep=',')
+data_combined.to_csv('data_v2_full.csv', sep=',')
